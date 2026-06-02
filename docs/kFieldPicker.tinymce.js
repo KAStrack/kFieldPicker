@@ -1,5 +1,5 @@
 /*!
- * kFieldPicker — TinyMCE adapter v0.1
+ * kFieldPicker — TinyMCE adapter v0.1.1
  * Optional add-on. Registers a 'tinymce' adapter so kFieldPicker can drive a
  * TinyMCE editor (iframe or inline). Load AFTER kFieldPicker.js and TinyMCE.
  *

@@ -11,7 +11,7 @@ row rendering — all with no build step and no runtime dependencies.
 
 [Examples and Docs](https://kastrack.github.io/kFieldPicker/)
 
-**Current version: 0.1**
+**Current version: 0.1.1**
 
 ---
 
@@ -188,7 +188,7 @@ kFieldPicker('#notes', { trigger: '/', dropdownClass: 'kfp-dark' });
 | `ajaxTransform` | function \| null | `null` | Maps raw ajax response → items array (flat or nested). |
 | `ajaxFallback` | boolean | `false` | Fall back to local `items` if ajax fails. |
 | `minChars` | number | `0` | Min chars after trigger before showing results. |
-| `maxResults` | number | `10` | Max leaf items shown (group headers don't count). |
+| `maxResults` | number \| false | `10` | Max leaf items shown (group headers don't count). Set to `false` (or `0`) for unlimited. |
 | `caseSensitive` | boolean | `false` | Case-sensitive filtering. |
 | `insertTemplate` | string \| function \| null | `null` | Controls inserted text (`'{{value}}'`, or `function(item)`). |
 | `includeTriggerInInsert` | boolean | `false` | Prepend the trigger char to inserted text. |
@@ -236,7 +236,7 @@ picker.destroy();           // unbind events, remove DOM, restore the element
 **Statics**
 
 ```js
-kFieldPicker.version                         // '0.1'
+kFieldPicker.version                         // '0.1.1'
 kFieldPicker.registerAdapter(name, adapter)  // register a custom editor adapter
 kFieldPicker.adapters                         // the adapter registry
 kFieldPicker.escapeHtml(str)                  // HTML-escape a string

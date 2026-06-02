@@ -11,7 +11,7 @@
 <aside class="sidebar">
   <div class="sidebar-brand">
     <div class="sidebar-logo"><span class="logo-k">k</span><span class="logo-f">F</span>ield<span class="logo-p">P</span>icker</div>
-    <span class="sidebar-ver">v0.1</span>
+    <span class="sidebar-ver">v0.1.1</span>
   </div>
   <nav>
     <ul>
@@ -83,7 +83,7 @@
         <tr><td><code>ajaxTransform</code></td><td>function|null</td><td><code>null</code></td><td>Maps raw ajax response → items array (flat or nested).</td></tr>
         <tr><td><code>ajaxFallback</code></td><td>boolean</td><td><code>false</code></td><td>Fall back to local <code>items</code> if ajax fails.</td></tr>
         <tr><td><code>minChars</code></td><td>number</td><td><code>0</code></td><td>Min chars after trigger before showing results.</td></tr>
-        <tr><td><code>maxResults</code></td><td>number</td><td><code>10</code></td><td>Max leaf items shown (group headers don't count).</td></tr>
+        <tr><td><code>maxResults</code></td><td>number | false</td><td><code>10</code></td><td>Max leaf items shown (group headers don't count). Set to <code>false</code> (or <code>0</code>) for unlimited — show every match.</td></tr>
         <tr><td><code>caseSensitive</code></td><td>boolean</td><td><code>false</code></td><td>Case-sensitive filtering.</td></tr>
         <tr><td><code>insertTemplate</code></td><td>string|function|null</td><td><code>null</code></td><td>Controls inserted text. See <a href="#templates">Insert Templates</a>.</td></tr>
         <tr><td><code>includeTriggerInInsert</code></td><td>boolean</td><td><code>false</code></td><td>Prepend trigger char to inserted text.</td></tr>

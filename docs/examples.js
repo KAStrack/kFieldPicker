@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
     ],
     insertTemplate: '{{value}}',
     appendSpace: true,
-    maxResults: 12,
+    maxResults: false,   // unlimited — show every match, no cap
     onSelect: function (item) {
       setOutput('ex-grouped-out', 'Inserted <code>&#123;&#123;' + item.value + '&#125;&#125;</code> — ' + item.label);
     },

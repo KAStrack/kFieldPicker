@@ -1,5 +1,5 @@
 /*!
- * kFieldPicker v0.1
+ * kFieldPicker v0.1.1
  * A lightweight, configurable pattern/field picker for text inputs and textareas.
  * No dependencies. Easy install.
  */
@@ -26,7 +26,7 @@
     ajaxFallback: false,
     ajaxTransform: null,
     minChars: 0,
-    maxResults: 10,
+    maxResults: 10,    // false / 0 → unlimited (show all matches)
     caseSensitive: false,
     insertTemplate: null,
     includeTriggerInInsert: false,
@@ -102,10 +102,11 @@
   // Recursively flatten items into render nodes, filtering leaves by regex.
   // re === null means "show all" (no query typed yet).
   // count.n tracks leaf items shown so far for maxResults enforcement.
+  // maxResults falsy (false / 0 / null) → unlimited; show every match.
   function flattenItems(items, re, depth, maxResults, count) {
     var out = [];
     for (var i = 0; i < items.length; i++) {
-      if (count.n >= maxResults) break;
+      if (maxResults && count.n >= maxResults) break;
       var item = items[i];
 
       if (isGroup(item)) {
@@ -880,7 +881,7 @@
       '<mark class="kfp-highlight">$1</mark>');
   };
 
-  kFieldPicker.version  = '0.1';
+  kFieldPicker.version  = '0.1.1';
 
   return kFieldPicker;
 }));
