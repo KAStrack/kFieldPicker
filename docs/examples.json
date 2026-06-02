@@ -1,0 +1,24 @@
+{
+  "items": [
+    { "label": "First Name",       "value": "first_name",     "description": "The contact's first name" },
+    { "label": "Last Name",        "value": "last_name",      "description": "The contact's last name" },
+    { "label": "Full Name",        "value": "full_name",      "description": "First and last name combined" },
+    { "label": "Email Address",    "value": "email",          "description": "Primary email address" },
+    { "label": "Phone Number",     "value": "phone",          "description": "Primary phone number" },
+    { "label": "Company Name",     "value": "company",        "description": "The contact's organisation" },
+    { "label": "Job Title",        "value": "job_title",      "description": "The contact's role or position" },
+    { "label": "City",             "value": "city",           "description": "City of residence or business" },
+    { "label": "Country",          "value": "country",        "description": "Country of residence or business" },
+    { "label": "Postcode",         "value": "postcode",       "description": "Postal or ZIP code" },
+    { "label": "Account Number",   "value": "account_number", "description": "Internal account reference" },
+    { "label": "Invoice Date",     "value": "invoice_date",   "description": "Date of the invoice" },
+    { "label": "Due Date",         "value": "due_date",       "description": "Payment due date" },
+    { "label": "Total Amount",     "value": "total_amount",   "description": "Total amount due" },
+    { "label": "Currency",         "value": "currency",       "description": "Currency code, e.g. GBP" },
+    { "label": "Order Reference",  "value": "order_ref",      "description": "Order or booking reference" },
+    { "label": "Subscription Plan","value": "plan",           "description": "Current subscription plan" },
+    { "label": "Renewal Date",     "value": "renewal_date",   "description": "Next renewal date" },
+    { "label": "Support Agent",    "value": "agent_name",     "description": "Assigned support agent" },
+    { "label": "Ticket Number",    "value": "ticket_number",  "description": "Support ticket reference" }
+  ]
+}

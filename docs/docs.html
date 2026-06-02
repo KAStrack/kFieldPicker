@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kFieldPicker — Documentation</title>
+  <link rel="stylesheet" href="docs.css">
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-logo"><span class="logo-k">k</span><span class="logo-f">F</span>ield<span class="logo-p">P</span>icker</div>
+    <span class="sidebar-ver">v0.1</span>
+  </div>
+  <nav>
+    <ul>
+      <li><span class="nav-section">Getting Started</span></li>
+      <li><a href="#install">Installation</a></li>
+      <li><a href="#quickstart">Quick Start</a></li>
+      <li><span class="nav-section">Configuration</span></li>
+      <li><a href="#options">All Options</a></li>
+      <li><a href="#items">Item Formats</a></li>
+      <li><a href="#groups">Grouped Items</a></li>
+      <li><a href="#templates">Insert Templates</a></li>
+      <li><a href="#freetext">Free Text</a></li>
+      <li><a href="#renderitem">Custom Rendering</a></li>
+      <li><a href="#async">Async Items</a></li>
+      <li><a href="#ajax">Ajax / Remote</a></li>
+      <li><a href="#callbacks">Callbacks</a></li>
+      <li><span class="nav-section">Usage</span></li>
+      <li><a href="#multi-trigger">Multiple Triggers</a></li>
+      <li><a href="#keyboard">Keyboard Nav</a></li>
+      <li><a href="#theming">Theming</a></li>
+      <li><a href="#adapters">Adapters</a></li>
+      <li><a href="#tinymce">TinyMCE</a></li>
+      <li><a href="#a11y">Accessibility</a></li>
+      <li><span class="nav-section">API</span></li>
+      <li><a href="#instance-api">Instance Methods</a></li>
+      <li><a href="#static-api">Static Methods</a></li>
+      <li><span class="nav-section">More</span></li>
+    </ul>
+  </nav>
+</aside>
+
+<main class="content">
+
+  <div class="top-nav">
+    <a href="index.html">Examples</a>
+    <a href="docs.html" class="active">Docs</a>
+  </div>
+
+  <h1>kFieldPicker</h1>
+  <p>A lightweight, zero-dependency pattern picker for <code>&lt;input&gt;</code> and <code>&lt;textarea&gt;</code> elements. Trigger a searchable dropdown with any character sequence.</p>
+
+  <h2 id="install">Installation</h2>
+  <pre><code><span class="cm">&lt;!-- In &lt;head&gt; --&gt;</span>
+&lt;link rel="stylesheet" href="kFieldPicker.css"&gt;
+<span class="cm">&lt;!-- Before &lt;/body&gt; --&gt;</span>
+&lt;script src="kFieldPicker.js"&gt;&lt;/script&gt;</code></pre>
+  <h3>CommonJS / ESM</h3>
+  <pre><code><span class="kw">const</span> kFieldPicker = <span class="fn">require</span>(<span class="str">'kfieldpicker'</span>);
+<span class="cm">// or: import kFieldPicker from 'kfieldpicker';</span></code></pre>
+
+  <h2 id="quickstart">Quick Start</h2>
+  <pre><code><span class="fn">kFieldPicker</span>(<span class="str">'#my-input'</span>, {
+  trigger: <span class="str">'#'</span>,
+  items: [<span class="str">'cat'</span>, <span class="str">'dog'</span>, <span class="str">'mouse'</span>],
+});</code></pre>
+  <p>Typing <code>#</code> opens the dropdown. Arrow keys navigate, Enter/Tab selects, Escape closes.</p>
+  <div class="callout callout--tip"><strong>Tip:</strong> Accepts a CSS selector, DOM element, or NodeList/array of elements.</div>
+
+  <h2 id="options">All Options</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>trigger</code></td><td>string</td><td><code>"#"</code></td><td>Character(s) that open the picker. Multi-char works: <code>"{{"</code>.</td></tr>
+        <tr><td><code>items</code></td><td>array|function</td><td><code>[]</code></td><td>Static items (strings, objects, or group objects), or a <code>function(query)</code> returning an array or <code>Promise</code> for fully custom filtering. See <a href="#items">Item Formats</a>, <a href="#groups">Groups</a>, <a href="#async">Async Items</a>.</td></tr>
+        <tr><td><code>ajaxUrl</code></td><td>string|null</td><td><code>null</code></td><td>Remote source URL. <code>?q=</code> is appended. See <a href="#ajax">Ajax</a>.</td></tr>
+        <tr><td><code>ajaxDebounce</code></td><td>number</td><td><code>300</code></td><td>Debounce delay (ms) before ajax fires.</td></tr>
+        <tr><td><code>ajaxParams</code></td><td>object</td><td><code>{}</code></td><td>Extra params appended to every ajax request.</td></tr>
+        <tr><td><code>ajaxTransform</code></td><td>function|null</td><td><code>null</code></td><td>Maps raw ajax response → items array (flat or nested).</td></tr>
+        <tr><td><code>ajaxFallback</code></td><td>boolean</td><td><code>false</code></td><td>Fall back to local <code>items</code> if ajax fails.</td></tr>
+        <tr><td><code>minChars</code></td><td>number</td><td><code>0</code></td><td>Min chars after trigger before showing results.</td></tr>
+        <tr><td><code>maxResults</code></td><td>number</td><td><code>10</code></td><td>Max leaf items shown (group headers don't count).</td></tr>
+        <tr><td><code>caseSensitive</code></td><td>boolean</td><td><code>false</code></td><td>Case-sensitive filtering.</td></tr>
+        <tr><td><code>insertTemplate</code></td><td>string|function|null</td><td><code>null</code></td><td>Controls inserted text. See <a href="#templates">Insert Templates</a>.</td></tr>
+        <tr><td><code>includeTriggerInInsert</code></td><td>boolean</td><td><code>false</code></td><td>Prepend trigger char to inserted text.</td></tr>
+        <tr><td><code>appendSpace</code></td><td>boolean</td><td><code>true</code></td><td>Append a space after inserted text.</td></tr>
+        <tr><td><code>noResultsText</code></td><td>string</td><td><code>"No results found"</code></td><td>Empty-state message.</td></tr>
+        <tr><td><code>showNoResults</code></td><td>boolean</td><td><code>true</code></td><td>Show empty-state vs. close dropdown.</td></tr>
+        <tr><td><code>highlightMatch</code></td><td>boolean</td><td><code>true</code></td><td>Bold matching portion of labels.</td></tr>
+        <tr><td><code>renderItem</code></td><td>function|null</td><td><code>null</code></td><td>Custom row renderer <code>(item, query) → HTML string | DOM node</code>. A falsy return uses the default row. See <a href="#renderitem">Custom Rendering</a>.</td></tr>
+        <tr><td><code>allowFreeText</code></td><td>boolean</td><td><code>false</code></td><td>Offer the raw typed query as a selectable item when it doesn't exactly match a listed item. The selected <code>item</code> carries <code>freeText: true</code>. See <a href="#freetext">Free Text</a>.</td></tr>
+        <tr><td><code>freeTextLabel</code></td><td>string</td><td><code>"Add"</code></td><td>Badge text on the free-text row. Set to <code>""</code> to hide the badge.</td></tr>
+        <tr><td><code>dropdownClass</code></td><td>string</td><td><code>""</code></td><td>Extra CSS class on dropdown. Use <code>"kfp-dark"</code> for dark theme.</td></tr>
+        <tr><td><code>placement</code></td><td>string</td><td><code>"auto"</code></td><td><code>"auto"</code>, <code>"below"</code>, or <code>"above"</code>.</td></tr>
+        <tr><td><code>adapter</code></td><td>string</td><td><code>"input"</code></td><td>Adapter name. See <a href="#adapters">Adapters</a>.</td></tr>
+        <tr><td><code>onOpen</code></td><td>function|null</td><td><code>null</code></td><td>Called when dropdown opens. Receives <code>(query)</code>.</td></tr>
+        <tr><td><code>onClose</code></td><td>function|null</td><td><code>null</code></td><td>Called when dropdown closes.</td></tr>
+        <tr><td><code>onSelect</code></td><td>function|null</td><td><code>null</code></td><td>Called on selection. Receives <code>(item, insertedText)</code>.</td></tr>
+        <tr><td><code>onNoResults</code></td><td>function|null</td><td><code>null</code></td><td>Called when filtered list is empty. Receives <code>(query)</code>.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="items">Item Formats</h2>
+  <pre><code><span class="cm">// Plain strings</span>
+items: [<span class="str">'cat'</span>, <span class="str">'dog'</span>]
+
+<span class="cm">// Objects</span>
+items: [
+  { <span class="kw">label</span>: <span class="str">'First Name'</span>, <span class="kw">value</span>: <span class="str">'first_name'</span> },
+  { <span class="kw">label</span>: <span class="str">'Email'</span>, <span class="kw">value</span>: <span class="str">'email'</span>, <span class="kw">description</span>: <span class="str">'Primary email address'</span> },
+]</code></pre>
+
+  <h2 id="groups">Grouped Items</h2>
+  <p>Items can be organised into groups using <code>{ group, children }</code> objects. Groups can be nested to any depth — children can themselves contain more group objects. Group headers are rendered as non-selectable section labels and are skipped during keyboard navigation. <code>maxResults</code> counts leaf items only.</p>
+
+  <pre><code>items: [
+  {
+    <span class="kw">group</span>: <span class="str">'Contact'</span>,
+    <span class="kw">children</span>: [
+      {
+        <span class="kw">group</span>: <span class="str">'Personal'</span>,          <span class="cm">// nested group</span>
+        <span class="kw">children</span>: [
+          { <span class="kw">label</span>: <span class="str">'First Name'</span>, <span class="kw">value</span>: <span class="str">'first_name'</span> },
+          { <span class="kw">label</span>: <span class="str">'Email'</span>,      <span class="kw">value</span>: <span class="str">'email'</span> },
+        ],
+      },
+      { <span class="kw">label</span>: <span class="str">'Company'</span>, <span class="kw">value</span>: <span class="str">'company'</span> }, <span class="cm">// leaf at group level</span>
+    ],
+  },
+  {
+    <span class="kw">group</span>: <span class="str">'Invoice'</span>,
+    <span class="kw">children</span>: [
+      { <span class="kw">label</span>: <span class="str">'Due Date'</span>,     <span class="kw">value</span>: <span class="str">'due_date'</span> },
+      { <span class="kw">label</span>: <span class="str">'Total Amount'</span>, <span class="kw">value</span>: <span class="str">'total_amount'</span> },
+    ],
+  },
+]</code></pre>
+  <div class="callout callout--tip"><strong>Filtering behaviour:</strong> When the user types after the trigger, group headers are automatically suppressed if all their children are filtered out. Only groups with at least one matching descendant are shown.</div>
+
+  <h2 id="templates">Insert Templates</h2>
+  <h3>String template</h3>
+  <pre><code>insertTemplate: <span class="str">'{{value}}'</span>  <span class="cm">// → {{first_name}}</span></code></pre>
+  <h3>Function template</h3>
+  <pre><code>insertTemplate: <span class="fn">function</span>(item) { <span class="kw">return</span> <span class="str">'['</span> + item.label + <span class="str">']('</span> + item.value + <span class="str">')'</span>; }</code></pre>
+  <p>Without <code>insertTemplate</code>, <code>item.value</code> is inserted. Use <code>includeTriggerInInsert: true</code> to prepend the trigger. Use <code>appendSpace: false</code> to skip the trailing space.</p>
+  <div class="callout callout--warn"><strong>Don't double the trigger:</strong> <code>includeTriggerInInsert: true</code> re-adds the trigger character, so your <code>item.value</code> (or <code>insertTemplate</code> output) should <em>not</em> already include it. With <code>trigger: '/'</code>, use <code>value: 'close'</code> — not <code>'/close'</code> — otherwise the insert becomes <code>//close</code>.</div>
+
+  <h2 id="freetext">Free Text</h2>
+  <p>Set <code>allowFreeText: true</code> to let users insert whatever they've typed, even if it isn't in the list. A synthetic row showing the raw query is appended as the <em>last</em> option, marked with a badge (<code>freeTextLabel</code>, default <code>"Add"</code>). It's suppressed when the query already exactly matches a listed item's <code>label</code> or <code>value</code>, so you never get a duplicate.</p>
+  <pre><code><span class="fn">kFieldPicker</span>(<span class="str">'#mentions'</span>, {
+  trigger: <span class="str">'@'</span>,
+  items: [<span class="str">'alice'</span>, <span class="str">'bob'</span>],
+  allowFreeText: <span class="kw">true</span>,
+  freeTextLabel: <span class="str">'Mention'</span>,
+  onSelect: <span class="fn">function</span>(item) {
+    <span class="kw">if</span> (item.freeText) { <span class="cm">/* user typed a value not in the list */</span> }
+  },
+});</code></pre>
+  <p>Because real suggestions are listed first, <kbd>Enter</kbd> selects a matching suggestion when one exists; the free-text row is only auto-selected when nothing else matches. The object passed to <code>onSelect</code> carries <code>freeText: true</code> for free-text selections. Inserted text still respects <code>insertTemplate</code>, <code>includeTriggerInInsert</code>, and <code>appendSpace</code>.</p>
+  <div class="callout callout--tip"><strong>Tip:</strong> Set <code>freeTextLabel: ''</code> to drop the badge and render the free-text row like a normal item.</div>
+
+  <h2 id="renderitem">Custom Rendering</h2>
+  <p>Pass <code>renderItem(item, query)</code> to control the contents of each row. Return an HTML <strong>string</strong> (set as the row's <code>innerHTML</code>) or a <strong>DOM node</strong> (appended). Return a falsy value to fall back to the default row — so you can customise only some rows (e.g. just the free-text row).</p>
+  <pre><code>renderItem: <span class="fn">function</span>(item, query) {
+  <span class="kw">if</span> (item.freeText) <span class="kw">return</span> <span class="str">'➕ Add “'</span> + kFieldPicker.<span class="fn">escapeHtml</span>(item.label) + <span class="str">'”'</span>;
+  <span class="kw">var</span> emoji = item.data &amp;&amp; item.data.emoji || <span class="str">'•'</span>;
+  <span class="kw">return</span> <span class="str">'&lt;span&gt;'</span> + emoji + <span class="str">' '</span> + kFieldPicker.<span class="fn">highlight</span>(item.label, query) + <span class="str">'&lt;/span&gt;'</span>;
+}</code></pre>
+  <p>The <code>item</code> argument is <code>{ label, value, description, data, freeText }</code>. The row wrapper (active state, click handling, ARIA, nesting indent) is always managed for you — <code>renderItem</code> only fills the row's content.</p>
+  <div class="callout callout--warn"><strong>Security:</strong> a returned <em>string</em> is inserted as HTML. Escape any untrusted text with <code>kFieldPicker.escapeHtml(str)</code>, or use <code>kFieldPicker.highlight(text, query)</code> which escapes <em>and</em> wraps the match in <code>&lt;mark class="kfp-highlight"&gt;</code>. Return a DOM node to avoid HTML parsing entirely.</div>
+
+  <h2 id="async">Async / Function Items</h2>
+  <p>Set <code>items</code> to a <code>function(query)</code> for fully custom filtering. Return an array (sync) or a <code>Promise</code> resolving to an array; nested group objects are supported. A loading spinner shows while a promise is pending, and stale resolutions are dropped if the user keeps typing.</p>
+  <pre><code><span class="fn">kFieldPicker</span>(<span class="str">'#field'</span>, {
+  trigger: <span class="str">'#'</span>,
+  minChars: <span class="num">1</span>,
+  items: <span class="fn">function</span>(query) {
+    <span class="kw">return</span> <span class="fn">fetch</span>(<span class="str">'/api/search?q='</span> + <span class="fn">encodeURIComponent</span>(query))
+      .<span class="fn">then</span>(<span class="kw">function</span>(r) { <span class="kw">return</span> r.<span class="fn">json</span>(); }); <span class="cm">// → [{label, value}, …]</span>
+  },
+});</code></pre>
+  <p>Because the function already filtered, kFieldPicker does <strong>not</strong> re-filter the results (unlike <a href="#ajax">ajaxUrl</a>) — your matching logic (fuzzy, ranked, remote, whatever) is preserved. <code>maxResults</code>, <code>allowFreeText</code>, grouping, and <code>renderItem</code> still apply.</p>
+  <div class="callout callout--tip"><strong>Debouncing:</strong> function items aren't debounced (sync filtering stays instant). If your function does network I/O, debounce/throttle inside it — or use <a href="#ajax">ajaxUrl</a> with <code>ajaxDebounce</code>.</div>
+
+  <h2 id="ajax">Ajax / Remote Source</h2>
+  <p>Set <code>ajaxUrl</code> to load items from a remote endpoint. The current search term is sent as <code>?q=&lt;query&gt;</code>, debounced by <code>ajaxDebounce</code> ms.</p>
+  <pre><code><span class="fn">kFieldPicker</span>(<span class="str">'#my-field'</span>, {
+  ajaxUrl: <span class="str">'/api/fields'</span>,
+  ajaxDebounce: <span class="num">250</span>,
+  ajaxTransform: <span class="fn">function</span>(data) {
+    <span class="kw">return</span> data.results; <span class="cm">// must return a flat or nested items array</span>
+  },
+});</code></pre>
+  <div class="callout"><strong>Client-side filtering:</strong> kFieldPicker always applies its own filtering to the result of <code>ajaxTransform</code>. This means you can point <code>ajaxUrl</code> at a static JSON file and filtering will still work. If your server already filters by <code>q</code>, all results will pass through the client-side filter unchanged (every item matches).</div>
+  <div class="callout callout--warn"><strong>CORS:</strong> Ensure your API returns <code>Access-Control-Allow-Origin</code> if cross-origin. The ajax example requires a local HTTP server — open <code>file://</code> paths will block XHR.</div>
+
+  <h2 id="callbacks">Callbacks</h2>
+  <pre><code><span class="fn">kFieldPicker</span>(<span class="str">'#my-field'</span>, {
+  onOpen:      <span class="fn">function</span>(query) { },
+  onClose:     <span class="fn">function</span>() { },
+  onSelect:    <span class="fn">function</span>(item, insertedText) { <span class="cm">/* item: { label, value, description, data } */</span> },
+  onNoResults: <span class="fn">function</span>(query) { },
+});</code></pre>
+
+  <h2 id="multi-trigger">Multiple Triggers on One Element</h2>
+  <pre><code><span class="kw">const</span> el = document.<span class="fn">getElementById</span>(<span class="str">'my-field'</span>);
+<span class="fn">kFieldPicker</span>(el, { trigger: <span class="str">'#'</span>, items: [<span class="str">'first_name'</span>, <span class="str">'email'</span>] });
+<span class="fn">kFieldPicker</span>(el, { trigger: <span class="str">'@'</span>, items: [<span class="str">'alice'</span>, <span class="str">'bob'</span>], insertTemplate: <span class="str">'@{value}'</span> });</code></pre>
+
+  <h2 id="keyboard">Keyboard Navigation</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><code>↓</code></td><td>Move selection down (skips group headers)</td></tr>
+        <tr><td><code>↑</code></td><td>Move selection up (skips group headers)</td></tr>
+        <tr><td><code>Enter</code></td><td>Select highlighted item</td></tr>
+        <tr><td><code>Tab</code></td><td>Select highlighted item</td></tr>
+        <tr><td><code>Escape</code></td><td>Dismiss the dropdown</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="theming">Theming</h2>
+  <p>All visual values are CSS custom properties. Override globally or scope to a class.</p>
+  <pre><code>:root {
+  --kfp-bg:                <span class="str">#1c1c1e</span>;
+  --kfp-item-color-active: <span class="str">#4d9eff</span>;
+  --kfp-mark-color:        <span class="str">#4d9eff</span>;
+  --kfp-group-color:       <span class="str">#48484a</span>;
+}</code></pre>
+  <p>Built-in dark theme: <code>dropdownClass: 'kfp-dark'</code></p>
+
+  <h2 id="adapters">Adapters</h2>
+  <p>An adapter teaches kFieldPicker how to read and write a particular kind of target. The built-in <code>input</code> adapter handles <code>&lt;input&gt;</code>/<code>&lt;textarea&gt;</code>; custom adapters integrate rich-text editors. The <code>target</code> you pass to <code>kFieldPicker()</code> can be a CSS selector, DOM element, NodeList/array, <em>or any opaque object</em> (e.g. an editor instance) that your adapter knows how to drive.</p>
+  <pre><code><span class="fn">kFieldPicker</span>.<span class="fn">registerAdapter</span>(<span class="str">'my-editor'</span>, {
+  getQuery:       <span class="fn">function</span>(el, trigger) { <span class="cm">/* return { query, triggerPos, cursorPos } or null */</span> },
+  insert:         <span class="fn">function</span>(el, text, triggerPos, cursorPos) { <span class="cm">/* insert text */</span> },
+  getCaretCoords: <span class="fn">function</span>(el, pos) { <span class="cm">/* return { top, left, bottom } viewport coords */</span> },
+  bind:           <span class="fn">function</span>(el, onInput, onKeydown, onReposition) { <span class="kw">return function</span>() { <span class="cm">/* unbind */</span> }; },
+  getAriaTarget:  <span class="fn">function</span>(el) { <span class="kw">return</span> el; <span class="cm">/* optional: element to mark up as the combobox */</span> },
+});</code></pre>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Method</th><th>Required</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><code>getQuery(el, trigger)</code></td><td>yes</td><td>Inspect the caret context; return <code>{ query, triggerPos, cursorPos }</code> or <code>null</code> when the trigger isn't active.</td></tr>
+        <tr><td><code>insert(el, text, triggerPos, cursorPos)</code></td><td>yes</td><td>Replace the range from <code>triggerPos</code> to <code>cursorPos</code> with <code>text</code> and place the caret after it.</td></tr>
+        <tr><td><code>getCaretCoords(el, pos)</code></td><td>no</td><td>Return viewport <code>{ top, left, bottom }</code> for the caret so the dropdown can anchor to it. Omit to anchor to the element.</td></tr>
+        <tr><td><code>bind(el, onInput, onKeydown, onReposition)</code></td><td>yes</td><td>Wire listeners; return an unbind function. Call <code>onReposition()</code> when the editor scrolls its own content (e.g. an iframe) so the dropdown follows the caret.</td></tr>
+        <tr><td><code>getAriaTarget(el)</code></td><td>no</td><td>The DOM element to receive the combobox ARIA attributes. Defaults to <code>el</code> when it's a DOM node; return <code>null</code> to skip.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="tinymce">TinyMCE adapter</h3>
+  <p>An optional <code>tinymce</code> adapter ships in <code>kFieldPicker.tinymce.js</code>. Load it after <code>kFieldPicker.js</code> and TinyMCE (5+), then attach the picker to the editor instance once it's ready:</p>
+  <pre><code><span class="cm">&lt;script src="kFieldPicker.js"&gt;&lt;/script&gt;</span>
+<span class="cm">&lt;script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js"&gt;&lt;/script&gt;</span>
+<span class="cm">&lt;script src="kFieldPicker.tinymce.js"&gt;&lt;/script&gt;</span>
+
+<span class="fn">tinymce</span>.<span class="fn">init</span>({
+  selector: <span class="str">'#editor'</span>,
+  setup: <span class="fn">function</span>(editor) {
+    editor.<span class="fn">on</span>(<span class="str">'init'</span>, <span class="fn">function</span>() {
+      <span class="fn">kFieldPicker</span>(editor, {
+        adapter: <span class="str">'tinymce'</span>,
+        trigger: <span class="str">'@'</span>,
+        items: [<span class="str">'alice'</span>, <span class="str">'bob'</span>],
+        insertTemplate: <span class="str">'@{value}'</span>,
+      });
+    });
+  },
+});</code></pre>
+  <p>It reads the caret from <code>editor.selection</code>, inserts into the active text node, translates caret coordinates from the editor's (possibly iframed) document into top-window space, repositions on editor scroll, and runs its <code>keydown</code> handler ahead of TinyMCE core so <kbd>Enter</kbd>/<kbd>Tab</kbd>/arrows drive the dropdown instead of the editor.</p>
+  <div class="callout callout--warn"><strong>Iframe ARIA caveat:</strong> in classic (iframe) mode the listbox lives in the top document while the editable body lives in the iframe, so <code>aria-controls</code>/<code>aria-activedescendant</code> (cross-document ID references) don't resolve for assistive tech. They resolve normally for <code>inline: true</code> editors. The visual and keyboard experience is unaffected.</div>
+
+  <h2 id="a11y">Accessibility</h2>
+  <p>kFieldPicker implements the ARIA <strong>combobox</strong> pattern so screen readers announce the popup and the active option. On initialisation the field — or, for editor adapters, the adapter's <a href="#adapters">ARIA target</a> element — receives:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Attribute</th><th>On</th><th>Behaviour</th></tr></thead>
+      <tbody>
+        <tr><td><code>role="combobox"</code></td><td>field</td><td>Marks the input/textarea as controlling a popup. Any pre-existing <code>role</code> is restored on <code>destroy()</code>.</td></tr>
+        <tr><td><code>aria-autocomplete="list"</code></td><td>field</td><td>Suggestions appear in a list as you type.</td></tr>
+        <tr><td><code>aria-haspopup="listbox"</code></td><td>field</td><td>The popup is a listbox.</td></tr>
+        <tr><td><code>aria-expanded</code></td><td>field</td><td>Toggled <code>true</code>/<code>false</code> as the dropdown opens and closes.</td></tr>
+        <tr><td><code>aria-controls</code></td><td>field</td><td>Points to the listbox's generated <code>id</code>.</td></tr>
+        <tr><td><code>aria-activedescendant</code></td><td>field</td><td>Tracks the highlighted option's <code>id</code> during keyboard/mouse navigation; cleared on close.</td></tr>
+        <tr><td><code>role="listbox"</code></td><td>dropdown</td><td>Each item is a <code>role="option"</code> with a unique <code>id</code> and <code>aria-selected</code>.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout callout--warn"><strong>Multiple pickers on one element:</strong> the single-valued field attributes (<code>aria-expanded</code>, <code>aria-controls</code>, <code>aria-activedescendant</code>) reflect whichever instance acted most recently. Since only one dropdown is open at a time this stays correct in practice, but it's a known limitation of the multi-trigger setup.</div>
+
+  <h2 id="instance-api">Instance Methods</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>picker.open()</code></td><td>Manually trigger open at current caret position.</td></tr>
+        <tr><td><code>picker.close()</code></td><td>Programmatically close the dropdown.</td></tr>
+        <tr><td><code>picker.updateOptions(opts)</code></td><td>Merge new options (e.g. swap <code>items</code> dynamically).</td></tr>
+        <tr><td><code>picker.destroy()</code></td><td>Remove listeners and dropdown from DOM.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="static-api">Static Methods</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Member</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>kFieldPicker.registerAdapter(name, adapter)</code></td><td>Register a custom adapter.</td></tr>
+        <tr><td><code>kFieldPicker.adapters</code></td><td>Object of all registered adapters.</td></tr>
+        <tr><td><code>kFieldPicker.version</code></td><td>Version string.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+</body>
+</html>

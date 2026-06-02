@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kFieldPicker — Examples</title>
+  <link rel="stylesheet" href="kFieldPicker.min.css">
+  <link rel="stylesheet" href="examples.css">
+</head>
+<body>
+
+  <!-- ░░ HERO ░░ -->
+  <header class="hero">
+    <nav class="hero__nav">
+      <a href="index.html" class="nav-link nav-link--active">Examples</a>
+      <a href="docs.html" class="nav-link">Docs</a>
+    </nav>
+
+    <div class="hero__logo">
+      <span class="logo-k">k</span><span class="logo-f">F</span>ield<span class="logo-p">P</span>icker
+    </div>
+    <p class="hero__tagline">
+      A zero-dependency pattern picker for any text input.<br>
+      <span class="hero__trigger-demo"><span class="td-char">#</span><span class="td-char">@</span><span class="td-char">/</span><span class="td-char">{{</span></span>
+      Trigger on any character. Filter as you type.
+    </p>
+    <div class="hero__pills">
+      <span class="pill pill--blue">No dependencies</span>
+      <span class="pill pill--violet">2 files</span>
+      <span class="pill pill--green">CSS + JS</span>
+      <span class="pill pill--orange">Infinitely nestable</span>
+    </div>
+  </header>
+
+  <!-- ░░ EXAMPLES ░░ -->
+  <main class="examples">
+
+    <!-- 1. Basic -->
+    <div class="card">
+      <div class="card__stripe card__stripe--blue"></div>
+      <div class="card__body">
+        <div class="card__head">
+          <div class="card__number">01</div>
+          <div>
+            <div class="card__title">Basic field picker</div>
+            <div class="card__desc">Simple string items, triggered by <code>#</code>.</div>
+          </div>
+        </div>
+        <label>Try typing: <strong>I saw a #</strong></label>
+        <input type="text" id="ex-basic" placeholder="I saw a #ca…" autocomplete="off" spellcheck="false">
+        <div class="output" id="ex-basic-out"><div class="output__dot"></div><span class="output__text">Select an item to see what's inserted</span></div>
+        <details class="src">
+          <summary class="src__summary">View source</summary>
+          <pre class="src__pre"><code class="example-src" data-example="1">Loading…</code></pre>
+        </details>
+      </div>
+      <div class="card__foot">
+        <code class="chip">trigger: '#'</code>
+        <span class="chip chip--dim">cat · dog · mouse · rabbit · hamster · parrot · goldfish</span>
+      </div>
+    </div>
+
+    <!-- 2. Template fields -->
+    <div class="card">
+      <div class="card__stripe card__stripe--violet"></div>
+      <div class="card__body">
+        <div class="card__head">
+          <div class="card__number">02</div>
+          <div>
+            <div class="card__title">Email template fields</div>
+            <div class="card__desc">Object items with descriptions. Inserts <code>&#123;&#123;value&#125;&#125;</code> tokens via <code>insertTemplate</code>.</div>
+          </div>
+        </div>
+        <label>Type <code>&#123;&#123;</code> to insert a merge field</label>
+        <textarea id="ex-template" placeholder="Dear {{first_name}},&#10;&#10;Thank you for joining…" rows="4" spellcheck="false"></textarea>
+        <div class="output" id="ex-template-out"><div class="output__dot"></div><span class="output__text">Select a field to insert it</span></div>
+        <details class="src">
+          <summary class="src__summary">View source</summary>
+          <pre class="src__pre"><code class="example-src" data-example="2">Loading…</code></pre>
+        </details>
+      </div>
+      <div class="card__foot">
+        <code class="chip">trigger: '{{'</code>
+        <code class="chip">insertTemplate</code>
+        <span class="chip chip--dim">first_name · last_name · email · company · phone · date_today</span>
+      </div>
+    </div>
+
+    <!-- 3. @mentions -->
+    <div class="card">
+      <div class="card__stripe card__stripe--green"></div>
+      <div class="card__body">
+        <div class="card__head">
+          <div class="card__number">03</div>
+          <div>
+            <div class="card__title">@mentions</div>
+            <div class="card__desc">Team members with department descriptions. Inserts <code>@username</code>. With <code>allowFreeText</code>, you can mention someone not in the list.</div>
+          </div>
+        </div>
+        <label>Type <code>@</code> to mention a teammate (or anyone)</label>
+        <textarea id="ex-mentions" placeholder="Great work @alice, could you loop in @…" rows="3" spellcheck="false"></textarea>
+        <div class="output" id="ex-mentions-out"><div class="output__dot"></div><span class="output__text">Mention someone</span></div>
+        <details class="src">
+          <summary class="src__summary">View source</summary>
+          <pre class="src__pre"><code class="example-src" data-example="3">Loading…</code></pre>
+        </details>
+      </div>
+      <div class="card__foot">
+        <code class="chip">trigger: '@'</code>
+        <code class="chip">maxResults: 5</code>
+        <code class="chip">allowFreeText</code>
+        <span class="chip chip--dim">alice · bob · carol · david · eva · frank</span>
+      </div>
+    </div>
+
+    <!-- 4. Grouped / nested items -->
+    <div class="card">
+      <div class="card__stripe card__stripe--orange"></div>
+      <div class="card__body">
+        <div class="card__head">
+          <div class="card__number">04</div>
+          <div>
+            <div class="card__title">Grouped &amp; nested items</div>
+            <div class="card__desc">Items organised with <code>{ group, children }</code> — infinite nesting, like optgroups but better.</div>
+          </div>
+        </div>
+        <label>Type <code>#</code> to browse grouped fields</label>
+        <textarea id="ex-grouped" placeholder="Dear #first… Your order #order… Due on #due…" rows="3" spellcheck="false"></textarea>
+        <div class="output" id="ex-grouped-out"><div class="output__dot"></div><span class="output__text">Select a grouped field</span></div>
+        <details class="src">
+          <summary class="src__summary">View source</summary>
+          <pre class="src__pre"><code class="example-src" data-example="4">Loading…</code></pre>
+        </details>
+      </div>
+      <div class="card__foot">
+        <code class="chip">items: [&#123; group, children &#125;]</code>
+        <span class="chip chip--dim">Contact → Personal / Work · Invoice · Support</span>
+      </div>
+    </div>
+
+    <!-- 5. Remote / Ajax -->
+    <div class="card">
+      <div class="card__stripe card__stripe--pink"></div>
+      <div class="card__body">
+        <div class="card__head">
+          <div class="card__number">05</div>
+          <div>
+            <div class="card__title">Remote (Ajax) source</div>
+            <div class="card__desc">Fetches from <code>examples.json</code> with 300ms debounce. Client-side filtering is applied automatically.</div>
+          </div>
+        </div>
+        <label>Type <code>#</code> to search remote fields</label>
+        <textarea id="ex-remote" placeholder="Invoice total: {{total_amount}}, sent to {{email…" rows="3" spellcheck="false"></textarea>
+        <div class="output" id="ex-remote-out"><div class="output__dot"></div><span class="output__text">Select a remote field</span></div>
+        <details class="src">
+          <summary class="src__summary">View source</summary>
+          <pre class="src__pre"><code class="example-src" data-example="5">Loading…</code></pre>
+        </details>
+      </div>
+      <div class="card__foot">
+        <code class="chip">ajaxUrl</code>
+        <code class="chip">ajaxDebounce: 300</code>
+        <code class="chip">ajaxTransform</code>
+        <span class="chip chip--dim">examples.json · max 8 results</span>
+      </div>
+    </div>
+
+    <!-- 6. Dark + markdown -->
+    <div class="card card--dark">
+      <div class="card__stripe card__stripe--cyan"></div>
+      <div class="card__body">
+        <div class="card__head">
+          <div class="card__number card__number--dark">06</div>
+          <div>
+            <div class="card__title">Dark theme — Markdown shortcuts</div>
+            <div class="card__desc card__desc--dark">Type <code class="code--dark">/</code> to insert formatting. Uses the built-in <code class="code--dark">.kfp-dark</code> dropdown class.</div>
+          </div>
+        </div>
+        <label class="label--dark">Write markdown — type <code class="code--dark">/</code> for shortcuts</label>
+        <textarea id="ex-dark" class="input--dark" placeholder="## My Document&#10;&#10;Start writing… type / for shortcuts" rows="5" spellcheck="false"></textarea>
+        <div class="output output--dark" id="ex-dark-out"><div class="output__dot"></div><span class="output__text">Select a shortcut</span></div>
+        <details class="src">
+          <summary class="src__summary">View source</summary>
+          <pre class="src__pre"><code class="example-src" data-example="6">Loading…</code></pre>
+        </details>
+      </div>
+      <div class="card__foot card__foot--dark">
+        <code class="chip chip--dark">dropdownClass: 'kfp-dark'</code>
+        <span class="chip chip--dark chip--dim">/bold · /italic · /code · /link · /heading · /list · /todo</span>
+      </div>
+    </div>
+
+    <!-- 7. Slash commands + minChars -->
+    <div class="card">
+      <div class="card__stripe card__stripe--teal"></div>
+      <div class="card__body">
+        <div class="card__head">
+          <div class="card__number">07</div>
+          <div>
+            <div class="card__title">Slash commands <span class="card__title-sub">minChars: 1</span></div>
+            <div class="card__desc">Dropdown only opens after at least 1 character — avoids showing all on bare <code>/</code>.</div>
+          </div>
+        </div>
+        <label>Try <code>/cl</code>, <code>/as</code>, <code>/la</code>…</label>
+        <input type="text" id="ex-slash" placeholder="/cl… /as… /la…" autocomplete="off" spellcheck="false">
+        <div class="output" id="ex-slash-out"><div class="output__dot"></div><span class="output__text">Select a command</span></div>
+        <details class="src">
+          <summary class="src__summary">View source</summary>
+          <pre class="src__pre"><code class="example-src" data-example="7">Loading…</code></pre>
+        </details>
+      </div>
+      <div class="card__foot">
+        <code class="chip">minChars: 1</code>
+        <code class="chip">includeTriggerInInsert</code>
+        <span class="chip chip--dim">assign · close · reopen · label · milestone · priority</span>
+      </div>
+    </div>
+
+    <!-- 8. TinyMCE rich-text editor -->
+    <div class="card">
+      <div class="card__stripe card__stripe--violet"></div>
+      <div class="card__body">
+        <div class="card__head">
+          <div class="card__number">08</div>
+          <div>
+            <div class="card__title">Rich-text editor <span class="card__title-sub">TinyMCE adapter</span></div>
+            <div class="card__desc">A custom <code>tinymce</code> adapter drives @mentions inside a TinyMCE editor — across its iframe. TinyMCE is loaded from a CDN (needs a network connection).</div>
+          </div>
+        </div>
+        <label>Type <code>@</code> to mention a teammate in the editor</label>
+        <textarea id="ex-tinymce">Hi team — great work on the launch! Could you review this, </textarea>
+        <div class="output" id="ex-tinymce-out"><div class="output__dot"></div><span class="output__text">Mention someone in the editor</span></div>
+        <details class="src">
+          <summary class="src__summary">View source</summary>
+          <pre class="src__pre"><code class="example-src" data-example="8">Loading…</code></pre>
+        </details>
+      </div>
+      <div class="card__foot">
+        <code class="chip">adapter: 'tinymce'</code>
+        <code class="chip">trigger: '@'</code>
+        <code class="chip">allowFreeText</code>
+        <span class="chip chip--dim">needs tinymce + kFieldPicker.tinymce.js</span>
+      </div>
+    </div>
+
+    <!-- 9. Async items + custom renderItem -->
+    <div class="card">
+      <div class="card__stripe card__stripe--orange"></div>
+      <div class="card__body">
+        <div class="card__head">
+          <div class="card__number">09</div>
+          <div>
+            <div class="card__title">Async items + custom render <span class="card__title-sub">minChars: 1</span></div>
+            <div class="card__desc"><code>items</code> as a function returning a <code>Promise</code> — fully custom filtering with a loading spinner — plus <code>renderItem</code> for rich rows (emoji + highlighted name).</div>
+          </div>
+        </div>
+        <label>Type <code>#</code> then a letter — e.g. <code>#r</code>, <code>#s</code>, <code>#ja</code></label>
+        <input type="text" id="ex-async" placeholder="#py… #ru… #ja…" autocomplete="off" spellcheck="false">
+        <div class="output" id="ex-async-out"><div class="output__dot"></div><span class="output__text">Pick a language</span></div>
+        <details class="src">
+          <summary class="src__summary">View source</summary>
+          <pre class="src__pre"><code class="example-src" data-example="9">Loading…</code></pre>
+        </details>
+      </div>
+      <div class="card__foot">
+        <code class="chip">items: fn → Promise</code>
+        <code class="chip">renderItem</code>
+        <span class="chip chip--dim">simulated 220ms fetch · starts-with filter</span>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="page-footer">
+    <span class="logo-k">k</span><span class="logo-f">F</span>ield<span class="logo-p">P</span>icker <span class="footer-ver">v0.1</span>
+    &nbsp;·&nbsp;
+    <a href="docs.html">Documentation →</a>
+  </footer>
+
+  <script src="kFieldPicker.min.js"></script>
+  <!-- TinyMCE example (card 08): load TinyMCE + the optional adapter before examples.js -->
+  <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
+  <script src="kFieldPicker.tinymce.min.js"></script>
+  <script src="examples.js"></script>
+  <!-- Reads examples.js back and drops each demo's source into its "View source" panel -->
+  <script src="examples-source.js"></script>
+</body>
+</html>
