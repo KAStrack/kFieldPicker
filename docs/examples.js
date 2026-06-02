@@ -8,9 +8,11 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ─── 1. Basic ───────────────────────────────────────────────────────────────
+  // Multi-word items ('guinea pig', 'sea otter') let you test spaces: typing
+  // '#sea o' keeps 'sea otter' showing, while '#sea x' (no match) closes.
   kFieldPicker('#ex-basic', {
     trigger: '#',
-    items: ['cat', 'dog', 'mouse', 'rabbit', 'hamster', 'parrot', 'goldfish'],
+    items: ['cat', 'dog', 'mouse', 'rabbit', 'hamster', 'parrot', 'goldfish', 'guinea pig', 'sea otter'],
     appendSpace: false,
     onSelect: function (item) {
       setOutput('ex-basic-out', 'Inserted <code>' + item.value + '</code>');
@@ -256,6 +258,94 @@ document.addEventListener('DOMContentLoaded', function () {
     },
     onSelect: function (item) {
       setOutput('ex-async-out', (item.freeText ? 'Searched ' : 'Picked ') + '<code>' + item.value + '</code> — ' + item.label);
+    },
+  });
+
+  // ─── 10. TinyMCE — attach after init (decoupled) ────────────────────────────
+  // The picker does NOT have to be wired inside tinymce.init's `setup`. Here the
+  // init config and the kFieldPicker call are completely separate, and the attach
+  // code makes NO assumptions about timing — it tolerates running before the
+  // TinyMCE library has even loaded (slow CDN), before tinymce.init is called,
+  // and before the editor finishes initializing. Note there's no `if
+  // (window.tinymce)` guard: the helpers wait for whatever isn't ready yet.
+
+  // Wait for the TinyMCE library global itself. The CDN <script> may still be in
+  // flight (especially if loaded async/deferred), so poll until it appears.
+  // Resolves immediately when it's already present. Gives up after ~10s so a
+  // dead CDN doesn't poll forever.
+  var whenTinyMCE = function (cb) {
+    if (window.tinymce) { cb(window.tinymce); return; }
+    var tries = 0;
+    var poll = setInterval(function () {
+      if (window.tinymce) { clearInterval(poll); cb(window.tinymce); }
+      else if (++tries > 200) clearInterval(poll);   // ~10s — CDN unreachable, stop
+    }, 50);
+  };
+
+  // Attach the picker as soon as everything it needs exists: (1) the library,
+  // (2) the editor instance, (3) that editor's init. Each step waits if needed.
+  var attachPickerWhenReady = function (id, opts) {
+    whenTinyMCE(function (tinymce) {
+      function whenInitialized(editor) {
+        if (editor.initialized) kFieldPicker(editor, opts);          // already ready
+        else editor.on('init', function () { kFieldPicker(editor, opts); }); // wait for it
+      }
+      var existing = tinymce.get(id);          // null until init registers the editor
+      if (existing) { whenInitialized(existing); return; }
+      tinymce.on('AddEditor', function handler(e) {                  // not created yet — wait
+        if (e.editor.id !== id) return;        // ignore other editors (e.g. card 08)
+        tinymce.off('AddEditor', handler);     // got ours — stop listening
+        whenInitialized(e.editor);
+      });
+    });
+  };
+
+  // Queue the picker first — proving it tolerates the library/init/editor not
+  // being ready yet. The tinymce.init() below stays an entirely separate concern
+  // (also deferred until the library loads, since the demo owns that call too).
+  attachPickerWhenReady('ex-tinymce-after', {
+    adapter: 'tinymce',
+    trigger: '{{',
+    items: [
+      { label: 'First Name', value: 'first_name' },
+      { label: 'Last Name',  value: 'last_name' },
+      { label: 'Company',    value: 'company' },
+      { label: 'Email',      value: 'email' },
+    ],
+    insertTemplate: '{{value}}',
+    onSelect: function (item) {
+      setOutput('ex-tinymce-after-out', 'Inserted <code>&#123;&#123;' + item.value + '&#125;&#125;</code>');
+    },
+  });
+
+  whenTinyMCE(function (tinymce) {
+    tinymce.init({
+      selector: '#ex-tinymce-after',
+      license_key: 'gpl',
+      menubar: false,
+      toolbar: 'bold italic | bullist numlist',
+      statusbar: false,
+      promotion: false,
+      height: 200,
+    });
+  });
+
+  // ─── 11. Template trigger (#value#) ─────────────────────────────────────────
+  // Triggered by '#', inserts a #value# token via insertTemplate — pick "cat" and
+  // "#cat#" lands in the field. Because the trigger '#' also CLOSES the token,
+  // closeChar: '#' tells the picker the delimiter is symmetric: a completed #cat#
+  // is recognised as closed, so typing after it (#cat#TEST) won't re-open, and the
+  // picker only fires on a fresh '#'. Multi-word items ('guinea pig', 'sea otter')
+  // are searchable too — '#sea o' keeps "sea otter" showing and inserts
+  // "#sea otter#"; for a symmetric delimiter a '#' typed after a space starts a
+  // fresh token, so '#cat #se' still opens a new picker for "se".
+  kFieldPicker('#ex-basic-template', {
+    trigger: '#',
+    closeChar: '#',
+    items: ['cat', 'dog', 'mouse', 'rabbit', 'hamster', 'parrot', 'goldfish', 'guinea pig', 'sea otter'],
+    insertTemplate: '#{value}#',
+    onSelect: function (item) {
+      setOutput('ex-basic-template-out', 'Inserted <code>#' + item.value + '#</code>');
     },
   });
 

@@ -1,5 +1,5 @@
 /*!
- * kFieldPicker v0.1.1
+ * kFieldPicker v0.1.9
  * A lightweight, configurable pattern/field picker for text inputs and textareas.
  * No dependencies. Easy install.
  */
@@ -19,6 +19,7 @@
 
   var DEFAULTS = {
     trigger: '#',
+    closeChar: null,   // closing delimiter for token detection (e.g. '#' → #value#); null = none/auto bracket
     items: [],
     ajaxUrl: null,
     ajaxDebounce: 300,
@@ -68,6 +69,69 @@
 
   function escapeRegex(str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  // Bracket-style triggers (e.g. '{{', '[[', '((', '<<') have a natural closing
+  // form, so a closed token ('{{first_name}}') shouldn't re-open the picker.
+  var TRIGGER_CLOSE = { '{': '}', '[': ']', '(': ')', '<': '>' };
+  function triggerCloseChar(trigger) {
+    return (trigger && TRIGGER_CLOSE[trigger.charAt(0)]) || '';
+  }
+
+  // Locate the active query in `before` (the text up to the caret) for a given
+  // trigger. Returns { query, triggerPos, cursorPos } or null (no open token).
+  //
+  // The closing delimiter is the explicit `closeChar` option, else the trigger's
+  // bracket mirror (above), else none. Two cases:
+  //
+  //  • No closer (e.g. '#', '@', '/'): the query is whatever follows the LAST
+  //    trigger.
+  //
+  //  • With a closer: scan left→right tracking whether we're inside a token, and
+  //    return the still-open token at the caret (null if the latest token is
+  //    already closed). This covers asymmetric delimiters ('{{'…'}}') and, when
+  //    closeChar === trigger, SYMMETRIC ones ('#'…'#' → '#cat#'): the opening and
+  //    closing '#' are the same character, so naive lastIndexOf() would mistake a
+  //    token's closing '#' for a fresh trigger. For a symmetric delimiter, a
+  //    delimiter that sits right AFTER a space starts a fresh token (the previous
+  //    one was abandoned mid-type) instead of closing — so '#guinea pig' keeps its
+  //    space and stays searchable, while '#cat #dog' still treats '#dog' as new. A
+  //    delimiter right after non-space content closes the token as usual.
+  //
+  // A query MAY contain spaces (so multi-word labels stay searchable), but must
+  // not START with whitespace — a trigger immediately followed by a space isn't a
+  // real token. Whether a trailing space keeps the picker open is then decided by
+  // matching: _showResults closes it once a spaced query matches nothing.
+  function extractQuery(before, cursor, trigger, closeChar) {
+    var close = closeChar || triggerCloseChar(trigger);
+    var query, triggerPos;
+    if (!close) {
+      var last = before.lastIndexOf(trigger);
+      if (last === -1) return null;
+      query = before.substring(last + trigger.length);
+      triggerPos = last;
+    } else {
+      var symmetric = (close === trigger);
+      var inside = false, openPos = -1, i = 0;
+      while (i < before.length) {
+        if (!inside && before.substr(i, trigger.length) === trigger) {
+          inside = true; openPos = i; i += trigger.length;
+        } else if (inside && before.substr(i, close.length) === close) {
+          if (symmetric && i > 0 && /\s/.test(before.charAt(i - 1))) {
+            openPos = i; i += trigger.length;        // symmetric '#' after a space → fresh opener
+          } else {
+            inside = false; i += close.length;       // token closed
+          }
+        } else {
+          i += 1;
+        }
+      }
+      if (!inside) return null;
+      query = before.substring(openPos + trigger.length);
+      triggerPos = openPos;
+    }
+    if (/^\s/.test(query)) return null;
+    return { query: query, triggerPos: triggerPos, cursorPos: cursor };
   }
 
   function debounce(fn, ms) {
@@ -221,16 +285,11 @@
   var adapters = {};
 
   adapters.input = {
-    getQuery: function (el, trigger) {
+    getQuery: function (el, trigger, closeChar) {
       var val    = el.value;
       var cursor = el.selectionStart;
       if (cursor === null || cursor === undefined) cursor = val.length;
-      var before      = val.substring(0, cursor);
-      var lastTrigger = before.lastIndexOf(trigger);
-      if (lastTrigger === -1) return null;
-      var between = before.substring(lastTrigger + trigger.length);
-      if (/\s/.test(between)) return null;
-      return { query: between, triggerPos: lastTrigger, cursorPos: cursor };
+      return extractQuery(val.substring(0, cursor), cursor, trigger, closeChar);
     },
 
     insert: function (el, text, triggerPos, cursorPos) {
@@ -598,7 +657,7 @@
   Instance.prototype._onInput = function () {
     if (this._inserting) return;
 
-    var result = this._adapter.getQuery(this.el, this.options.trigger);
+    var result = this._adapter.getQuery(this.el, this.options.trigger, this.options.closeChar);
     if (!result) { this._close(); return; }
 
     this._state.triggerPos = result.triggerPos;
@@ -731,7 +790,11 @@
   Instance.prototype._showResults = function (nodes, query) {
     var hasItems = countSelectableItems(nodes) > 0;
 
-    if (!hasItems && !this.options.showNoResults) {
+    // Close (rather than show an empty state) when nothing matches AND either
+    // showNoResults is off, or the query contains a space. A spaced query that
+    // matches nothing means the space ended the token — e.g. "Alice J" keeps
+    // "Alice Johnson" showing, but "Alice a" (no match) closes the picker.
+    if (!hasItems && (!this.options.showNoResults || /\s/.test(query))) {
       this._close();
       if (typeof this.options.onNoResults === 'function') this.options.onNoResults(query);
       return;
@@ -881,7 +944,7 @@
       '<mark class="kfp-highlight">$1</mark>');
   };
 
-  kFieldPicker.version  = '0.1.1';
+  kFieldPicker.version  = '0.1.9';
 
   return kFieldPicker;
 }));

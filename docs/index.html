@@ -43,11 +43,11 @@
           <div class="card__number">01</div>
           <div>
             <div class="card__title">Basic field picker</div>
-            <div class="card__desc">Simple string items, triggered by <code>#</code>.</div>
+            <div class="card__desc">Simple string items, triggered by <code>#</code>. Includes multi-word items — type a space to keep filtering (e.g. <code>#sea o</code>); a space that matches nothing closes the picker.</div>
           </div>
         </div>
-        <label>Try typing: <strong>I saw a #</strong></label>
-        <input type="text" id="ex-basic" placeholder="I saw a #ca…" autocomplete="off" spellcheck="false">
+        <label>Try typing: <strong>I saw a #</strong> (try <code>#sea o</code>)</label>
+        <input type="text" id="ex-basic" placeholder="I saw a #sea o…" autocomplete="off" spellcheck="false">
         <div class="output" id="ex-basic-out"><div class="output__dot"></div><span class="output__text">Select an item to see what's inserted</span></div>
         <details class="src">
           <summary class="src__summary">View source</summary>
@@ -56,7 +56,7 @@
       </div>
       <div class="card__foot">
         <code class="chip">trigger: '#'</code>
-        <span class="chip chip--dim">cat · dog · mouse · rabbit · hamster · parrot · goldfish</span>
+        <span class="chip chip--dim">cat · dog · mouse · rabbit · hamster · parrot · goldfish · guinea pig · sea otter</span>
       </div>
     </div>
 
@@ -270,10 +270,63 @@
       </div>
     </div>
 
+    <!-- 10. TinyMCE — attach after init -->
+    <div class="card">
+      <div class="card__stripe card__stripe--violet"></div>
+      <div class="card__body">
+        <div class="card__head">
+          <div class="card__number">10</div>
+          <div>
+            <div class="card__title">Attach after init <span class="card__title-sub">decoupled from tinymce.init</span></div>
+            <div class="card__desc">Wiring the picker doesn't have to live inside <code>tinymce.init</code>'s <code>setup</code>. This attaches it separately and even <em>before</em> init finishes — it waits on the EditorManager (<code>tinymce.get</code> / <code>AddEditor</code> / the editor's <code>init</code> event), so a slow CDN load can't race it.</div>
+          </div>
+        </div>
+        <label>Type <code>{{</code> to insert a field — the picker attaches itself once the editor is ready</label>
+        <textarea id="ex-tinymce-after">Dear , thank you for your order. We'll ship it to  shortly.</textarea>
+        <div class="output" id="ex-tinymce-after-out"><div class="output__dot"></div><span class="output__text">Insert a field in the editor</span></div>
+        <details class="src">
+          <summary class="src__summary">View source</summary>
+          <pre class="src__pre"><code class="example-src" data-example="10">Loading…</code></pre>
+        </details>
+      </div>
+      <div class="card__foot">
+        <code class="chip">adapter: 'tinymce'</code>
+        <code class="chip">trigger: '{{'</code>
+        <span class="chip chip--dim">attaches post-init · waits if not ready</span>
+      </div>
+    </div>
+
+    <!-- 11. Template trigger (#value#) -->
+    <div class="card">
+      <div class="card__stripe card__stripe--blue"></div>
+      <div class="card__body">
+        <div class="card__head">
+          <div class="card__number">11</div>
+          <div>
+            <div class="card__title">Template trigger <span class="card__title-sub">#value#</span></div>
+            <div class="card__desc">Triggered by <code>#</code>, inserts a <code>#value#</code> token via <code>insertTemplate</code> — pick <code>cat</code> and <code>#cat#</code> is inserted. <code>closeChar: '#'</code> makes the picker treat the trigger as a <em>symmetric</em> delimiter, so a completed <code>#cat#</code> is recognised as closed. Multi-word items work too: <code>#sea o</code> keeps <code>sea otter</code> showing and inserts <code>#sea otter#</code>.</div>
+          </div>
+        </div>
+        <label>Try typing: <strong>I saw a #</strong> (try <code>#sea o</code>)</label>
+        <input type="text" id="ex-basic-template" placeholder="I saw a #sea o…" autocomplete="off" spellcheck="false">
+        <div class="output" id="ex-basic-template-out"><div class="output__dot"></div><span class="output__text">Select an item to see what's inserted</span></div>
+        <details class="src">
+          <summary class="src__summary">View source</summary>
+          <pre class="src__pre"><code class="example-src" data-example="11">Loading…</code></pre>
+        </details>
+      </div>
+      <div class="card__foot">
+        <code class="chip">trigger: '#'</code>
+        <code class="chip">closeChar: '#'</code>
+        <code class="chip">insertTemplate: '#&#123;value&#125;#'</code>
+        <span class="chip chip--dim">cat · dog · mouse · rabbit · hamster · parrot · goldfish · guinea pig · sea otter</span>
+      </div>
+    </div>
+
   </main>
 
   <footer class="page-footer">
-    <span class="logo-k">k</span><span class="logo-f">F</span>ield<span class="logo-p">P</span>icker <span class="footer-ver">v0.1.1</span>
+    <span class="logo-k">k</span><span class="logo-f">F</span>ield<span class="logo-p">P</span>icker <span class="footer-ver">v0.1.9</span>
     &nbsp;·&nbsp;
     <a href="docs.html">Documentation →</a>
   </footer>

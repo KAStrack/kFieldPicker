@@ -11,7 +11,7 @@
 <aside class="sidebar">
   <div class="sidebar-brand">
     <div class="sidebar-logo"><span class="logo-k">k</span><span class="logo-f">F</span>ield<span class="logo-p">P</span>icker</div>
-    <span class="sidebar-ver">v0.1.1</span>
+    <span class="sidebar-ver">v0.1.9</span>
   </div>
   <nav>
     <ul>
@@ -76,6 +76,7 @@
       <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
       <tbody>
         <tr><td><code>trigger</code></td><td>string</td><td><code>"#"</code></td><td>Character(s) that open the picker. Multi-char works: <code>"{{"</code>.</td></tr>
+        <tr><td><code>closeChar</code></td><td>string|null</td><td><code>null</code></td><td>Closing delimiter for token detection. Set it when the inserted token is wrapped — e.g. <code>trigger: '#'</code> + <code>insertTemplate: '#&#123;value&#125;#'</code> needs <code>closeChar: '#'</code> so a completed <code>#cat#</code> is seen as closed (the dropdown won't re-open on text after it). Bracket triggers (<code>"{{"</code> → <code>"}}"</code>) auto-detect their closer, so leave this <code>null</code>.</td></tr>
         <tr><td><code>items</code></td><td>array|function</td><td><code>[]</code></td><td>Static items (strings, objects, or group objects), or a <code>function(query)</code> returning an array or <code>Promise</code> for fully custom filtering. See <a href="#items">Item Formats</a>, <a href="#groups">Groups</a>, <a href="#async">Async Items</a>.</td></tr>
         <tr><td><code>ajaxUrl</code></td><td>string|null</td><td><code>null</code></td><td>Remote source URL. <code>?q=</code> is appended. See <a href="#ajax">Ajax</a>.</td></tr>
         <tr><td><code>ajaxDebounce</code></td><td>number</td><td><code>300</code></td><td>Debounce delay (ms) before ajax fires.</td></tr>
@@ -141,6 +142,7 @@ items: [
   },
 ]</code></pre>
   <div class="callout callout--tip"><strong>Filtering behaviour:</strong> When the user types after the trigger, group headers are automatically suppressed if all their children are filtered out. Only groups with at least one matching descendant are shown.</div>
+  <div class="callout callout--tip"><strong>Spaces:</strong> A query may contain spaces, so multi-word labels like <code>"Alice Johnson"</code> stay searchable — typing <code>Alice J</code> keeps it shown. A space that matches nothing ends the token and closes the picker (e.g. <code>Alice a</code>). A query can't start with a space. With <code>allowFreeText</code>, spaces are always kept.</div>
 
   <h2 id="templates">Insert Templates</h2>
   <h3>String template</h3>
@@ -239,7 +241,7 @@ items: [
   <h2 id="adapters">Adapters</h2>
   <p>An adapter teaches kFieldPicker how to read and write a particular kind of target. The built-in <code>input</code> adapter handles <code>&lt;input&gt;</code>/<code>&lt;textarea&gt;</code>; custom adapters integrate rich-text editors. The <code>target</code> you pass to <code>kFieldPicker()</code> can be a CSS selector, DOM element, NodeList/array, <em>or any opaque object</em> (e.g. an editor instance) that your adapter knows how to drive.</p>
   <pre><code><span class="fn">kFieldPicker</span>.<span class="fn">registerAdapter</span>(<span class="str">'my-editor'</span>, {
-  getQuery:       <span class="fn">function</span>(el, trigger) { <span class="cm">/* return { query, triggerPos, cursorPos } or null */</span> },
+  getQuery:       <span class="fn">function</span>(el, trigger, closeChar) { <span class="cm">/* return { query, triggerPos, cursorPos } or null */</span> },
   insert:         <span class="fn">function</span>(el, text, triggerPos, cursorPos) { <span class="cm">/* insert text */</span> },
   getCaretCoords: <span class="fn">function</span>(el, pos) { <span class="cm">/* return { top, left, bottom } viewport coords */</span> },
   bind:           <span class="fn">function</span>(el, onInput, onKeydown, onReposition) { <span class="kw">return function</span>() { <span class="cm">/* unbind */</span> }; },

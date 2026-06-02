@@ -1,5 +1,5 @@
 /*!
- * kFieldPicker — TinyMCE adapter v0.1.1
+ * kFieldPicker — TinyMCE adapter v0.1.9
  * Optional add-on. Registers a 'tinymce' adapter so kFieldPicker can drive a
  * TinyMCE editor (iframe or inline). Load AFTER kFieldPicker.js and TinyMCE.
  *
@@ -43,17 +43,52 @@
     else if (typeof editor.fire === 'function')   editor.fire('input');
   }
 
+  // Mirror of kFieldPicker.js — keep in sync. Bracket-style triggers ('{{', …)
+  // auto-close via their mirror; an explicit closeChar handles asymmetric or
+  // symmetric ('#'…'#') delimiters. See extractQuery in the core for the full
+  // explanation of the left→right scan.
+  var TRIGGER_CLOSE = { '{': '}', '[': ']', '(': ')', '<': '>' };
+  function triggerCloseChar(trigger) {
+    return (trigger && TRIGGER_CLOSE[trigger.charAt(0)]) || '';
+  }
+  function extractQuery(before, cursor, trigger, closeChar) {
+    var close = closeChar || triggerCloseChar(trigger);
+    var query, triggerPos;
+    if (!close) {
+      var last = before.lastIndexOf(trigger);
+      if (last === -1) return null;
+      query = before.substring(last + trigger.length);
+      triggerPos = last;
+    } else {
+      var symmetric = (close === trigger);
+      var inside = false, openPos = -1, i = 0;
+      while (i < before.length) {
+        if (!inside && before.substr(i, trigger.length) === trigger) {
+          inside = true; openPos = i; i += trigger.length;
+        } else if (inside && before.substr(i, close.length) === close) {
+          if (symmetric && i > 0 && /\s/.test(before.charAt(i - 1))) {
+            openPos = i; i += trigger.length;        // symmetric '#' after a space → fresh opener
+          } else {
+            inside = false; i += close.length;
+          }
+        } else {
+          i += 1;
+        }
+      }
+      if (!inside) return null;
+      query = before.substring(openPos + trigger.length);
+      triggerPos = openPos;
+    }
+    if (/^\s/.test(query)) return null;
+    return { query: query, triggerPos: triggerPos, cursorPos: cursor };
+  }
+
   kFieldPicker.registerAdapter('tinymce', {
 
-    getQuery: function (editor, trigger) {
+    getQuery: function (editor, trigger, closeChar) {
       var ctx = activeTextContext(editor);
       if (!ctx) return null;
-      var before      = ctx.node.textContent.substring(0, ctx.offset);
-      var lastTrigger = before.lastIndexOf(trigger);
-      if (lastTrigger === -1) return null;
-      var between = before.substring(lastTrigger + trigger.length);
-      if (/\s/.test(between)) return null;
-      return { query: between, triggerPos: lastTrigger, cursorPos: ctx.offset };
+      return extractQuery(ctx.node.textContent.substring(0, ctx.offset), ctx.offset, trigger, closeChar);
     },
 
     insert: function (editor, text, triggerPos, cursorPos) {

@@ -11,7 +11,7 @@ row rendering — all with no build step and no runtime dependencies.
 
 [Examples and Docs](https://kastrack.github.io/kFieldPicker/)
 
-**Current version: 0.1.1**
+**Current version: 0.1.9**
 
 ---
 
@@ -236,7 +236,7 @@ picker.destroy();           // unbind events, remove DOM, restore the element
 **Statics**
 
 ```js
-kFieldPicker.version                         // '0.1.1'
+kFieldPicker.version                         // '0.1.9'
 kFieldPicker.registerAdapter(name, adapter)  // register a custom editor adapter
 kFieldPicker.adapters                         // the adapter registry
 kFieldPicker.escapeHtml(str)                  // HTML-escape a string
