@@ -112,7 +112,7 @@ body {
   position:    relative;
   font-size:   1rem;
   color:       var(--muted);
-  max-width:   44ch;
+  max-width:   45ch;
   margin:      0 auto 20px;
   line-height: 1.6;
 }
