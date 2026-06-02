@@ -9,6 +9,8 @@ It powers @mentions, `{{merge_field}}` template insertion, `/slash` commands,
 grouped/nested item lists, remote (ajax) sources, async item functions, and custom
 row rendering — all with no build step and no runtime dependencies.
 
+[Examples and Docs](https://kastrack.github.io/kFieldPicker/)
+
 **Current version: 0.1**
 
 ---
